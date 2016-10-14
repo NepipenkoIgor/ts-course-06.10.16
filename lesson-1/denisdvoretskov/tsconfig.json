@@ -8,5 +8,6 @@
     "strictNullChecks": true,
     "noUnusedLocals": true
   },
+  "include": ["./*.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,7 @@
 type TMenuItem = {title: string, items?: TMenuItem[]};
-type menuList = TMenuItem[];
+type TMenuList = TMenuItem[];
 
-const MENU: menuList = [
+const MENU: TMenuList = [
   {
     title: 'Животные',
     items: [
@@ -43,7 +43,7 @@ const MENU: menuList = [
   }
 ];
 
-function makeMenu(menu: menuList): string {
+function makeMenu(menu: TMenuList): string {
   let result: string = '<ul>';
 
   for (let item of menu) {
