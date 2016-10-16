@@ -1,4 +1,6 @@
-function isInArray(arr: any[], ...rest: any[]): boolean {
+type TInArray = number | string | boolean;
+
+function isInArray(arr: TInArray[], ...rest: TInArray[]): boolean {
   if (rest.length === 0) {
     return false;
   }
