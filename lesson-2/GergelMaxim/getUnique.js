@@ -7,4 +7,4 @@ function getUnique() {
         return array.indexOf(value) == index;
     });
 }
-console.log(getUnique(1, 2, 2, 3, 4, 4, 5));
+console.log(getUnique(1, 2, 2, 3, 4, 4, 5, 2, 2));
