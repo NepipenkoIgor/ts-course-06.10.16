@@ -1,7 +1,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch
 // https://github.com/iliakan/ts-course/blob/master/ts-lesson-3/demo-flikr-app/scripts/fetch.ts
 
-import * as _ from 'lodash';
+import 'lodash/debounce';
 
 declare const Q:{
     all:(arr:PromiseLike<any>[]) => PromiseLike<any>

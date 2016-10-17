@@ -1,5 +1,4 @@
 import {FlikrAppAsModuleHomework} from './flikr';
-
 import {config} from './config';
 import {getPhoto} from './fetchEvent';
 
