@@ -1,31 +1,20 @@
 # Вопросы
 
-#### array.includes
-Захотелось использовать `array.includes` под целевую платформу node.js 6.
+#### reverse
+Прокомментируйте пожалуйста код функции reverse. Я наконец-то понял
+зачем на самом деле нужны генераторы. Спасибо за пример.
 
-Для этого пришлось поставить модуль `@types/node` для того,
-чтобы TypeScript узнал про типы ноды и внести изменения в
-tsconfig.json: 
-```
-{
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
-    "types": ["node"],
-    "lib": ["es6","es5","dom","es2016.array.include"]
-  }
-}
-```
-Вопрос1: Так как про импорт типов сторонних библиотек на лекциях ещё
-информации не было, то верно ли я всё понял и сделал?
+Вопрос: Что скажете насчёт алгоритма?
 
-Вопрос2: Заменяет или дополняет директива `compilerOptions.lib` в `tsconfig.json`
-значения по умолчанию? Насколько я понял, то заменяет.  
-Цитата из доки:
-```
-Note: If --lib is not specified a default library is injected.
-The default library injected is:
- 
-► For --target ES5: dom,es5,scripthost
-► For --target ES6: dom,es6,dom.iterable,scripthost
-```
+#### menu - TypeGuards
+Прокомментируйте пожалуйста TypeGuards в методе doAction класса Menu.
+Метод написан в чисто учебных целях, для лучшего понимания
+TypeGuards.
+
+Вопрос: Так и надо делать?
+
+#### menu - data-*
+Для работы с кастомными data-* атрибутами я расширил интерфейс DOMStringMap.
+
+Вопрос: Правильно ли я получаю кастомные data-* атрибуты
+в методе handleClick класса ButtonActions?

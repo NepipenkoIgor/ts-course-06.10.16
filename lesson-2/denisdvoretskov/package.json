@@ -3,14 +3,17 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "lint": "./node_modules/.bin/tslint --force -t verbose -c ./tslint.json src/**/*.ts test/**/*.ts",
+    "build:func": "cd ./src/func && ../../node_modules/.bin/tsc",
+    "build:test": "cd ./test && ../node_modules/.bin/tsc",
+    "build": "npm run build:test",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --check-leaks --bail --recursive"
-  },
-  "dependencies": {
-    "mocha": "^3.1.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.45",
-    "mocha": "^3.1.2"
+    "mocha": "^3.1.2",
+    "tslint": "^3.15.1",
+    "typescript": "^2.0.3"
   }
 }
