@@ -1,7 +1,7 @@
 type TMenuItem = {title: string, items?: TMenuItem[]};
-type menuList = TMenuItem[];
+type TMenuList = TMenuItem[];
 
-const MENU: menuList = [
+const MENU: TMenuList = [
   {
     title: 'Животные',
     items: [
@@ -43,30 +43,29 @@ const MENU: menuList = [
   }
 ];
 
-function makeMenu(menu: menuList): string {
+function makeMenu(menu: TMenuList): string {
   let result: string = '<ul>';
 
-  for (let item of menu) {
-    result += '<li>' +
-      `<a ${item.items ? 'class="title"' : ''}>${item.title}</a>` +
-      `${item.items ? makeMenu(item.items) : ''}</li>`;
-  }
+  menu.forEach(item => {
+    result += `<li>
+<a ${item.items ? 'class="title"' : ''}>${item.title}</a>
+${item.items ? makeMenu(item.items) : ''}</li>`;
+  });
 
-  return result + '</ul>';
+  return `${result}</ul>`;
 }
 
-const menuElement: HTMLDivElement = document.querySelector('.menu') as HTMLDivElement;
+const menuElement: HTMLDivElement =
+        <HTMLDivElement>document.querySelector('.menu');
 
 menuElement.innerHTML = makeMenu(MENU);
 
 menuElement.onclick = (ev: MouseEvent) => {
-  const element = ev.target as HTMLAnchorElement;
+  const element = <HTMLAnchorElement>ev.target;
   const classList = element.classList;
 
   if (classList.contains('title')) {
-    const parentLi = element.parentNode as HTMLLIElement;
+    const parentLi = <HTMLLIElement>element.parentNode;
     parentLi.classList.toggle('menu-open');
   }
 };
-
-// TODO: Add linter

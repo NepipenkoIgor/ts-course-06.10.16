@@ -49,20 +49,19 @@ function generateMenu(list: MenuList): string {
 
     let z: string = `<ul>`;
     for (let a of list) {
-        z += `<li><a class="title">${a.title}</a>`;
-        z += `${generateMenu(a.items)}</li>`;
+        z += `<li><a class="title">${a.title}</a>${generateMenu(a.items)}</li>`;
     }
 
-    return z + `</ul>`;
+    return `${z}</ul>`;
 }
 
-let navMenuList: HTMLDivElement = document.querySelector('.menu') as HTMLDivElement;
+const navMenuList: HTMLDivElement = document.querySelector('.menu') as HTMLDivElement;
 navMenuList.innerHTML = generateMenu(menuList);
 navMenuList.onclick = (ev: MouseEvent) => {
-    let el = ev.target as HTMLAnchorElement;
-    let classList = el.classList;
+    const el : HTMLAnchorElement = ev.target as HTMLAnchorElement;
+    const classList : DOMTokenList = el.classList;
     if (classList.contains('title')) {
-        let parentLi = el.parentNode as HTMLLIElement;
+        const parentLi : HTMLElement = el.parentNode as HTMLLIElement;
         parentLi.classList.toggle('menu-open');
     }
 }

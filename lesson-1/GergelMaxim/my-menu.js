@@ -46,8 +46,7 @@ function generateMenu(list) {
     var z = "<ul>";
     for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
         var a = list_1[_i];
-        z += "<li><a class=\"title\">" + a.title + "</a>";
-        z += generateMenu(a.items) + "</li>";
+        z += "<li><a class=\"title\">" + a.title + "</a>" + generateMenu(a.items) + "</li>";
     }
     return z + "</ul>";
 }

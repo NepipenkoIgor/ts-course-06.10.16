@@ -7,9 +7,9 @@
     "noEmitOnError": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
-    "types": ["node"],
-    "lib": ["es6","es2016.array.include"]
-
+    "lib": ["es6", "es2016.array.include"],
+    "typeRoots": ["../node_modules/@types"],
+    "types": ["node", "mocha"]
   },
   "include": ["./*.ts"],
   "exclude": ["node_modules"]

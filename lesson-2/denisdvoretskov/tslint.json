@@ -8,7 +8,7 @@
     "no-consecutive-blank-lines": true,
     "whitespace": [
       true, "check-branch", "check-decl", "check-operator", "check-module",
-      "check-type", "check-typecast"
+      "check-type"
     ],
     "one-variable-per-declaration": [true, "ignore-for-loop"],
     "variable-name": [

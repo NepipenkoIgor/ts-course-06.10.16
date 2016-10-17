@@ -1,6 +1,5 @@
-/// <reference path="../node_modules/@types/mocha/index.d.ts"/>
 import * as assert from 'assert';
-import summator from '../src/node/summator';
+import summator from '../src/func/summator';
 
 describe('summator', () => {
   it('1 must return 1', () => {

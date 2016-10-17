@@ -23,37 +23,37 @@ function isLetter(char: string): boolean {
     return char.toLowerCase() != char.toUpperCase();
 }
 
-function letterReverse(str: string): string {
-    function swap(array: any[], indexA: number, indexB: number): void {
-        const temp = array[indexA];
-        array[indexA] = array[indexB];
-        array[indexB] = temp;
-    }
+function swap(array: any[], indexA: number, indexB: number): void {
+    const temp = array[indexA];
+    array[indexA] = array[indexB];
+    array[indexB] = temp;
+}
 
-    function reverser(word: string): string {
-        const array: string[] = word.split('');
-        let start: number = 0;
-        let end: number = word.length - 1;
+function reverseWord(word: string): string {
+    const array: string[] = word.split('');
+    let start: number = 0;
+    let end: number = word.length - 1;
 
-        while (end > 0 && start <= end) {
-            // skip non-letters
-            while(!isLetter(word[end])) {
-                end--;
-            }
-            while(!isLetter(word[start])) {
-                start++;
-            }
-
-            swap(array, start, end);
-
+    while (end > 0 && start <= end) {
+        // skip non-letters
+        while(!isLetter(word[end])) {
             end--;
+        }
+        while(!isLetter(word[start])) {
             start++;
         }
 
-        return array.join('');
+        swap(array, start, end);
+
+        end--;
+        start++;
     }
 
-    return str.split(/\s/).map(reverser).join(' ');
+    return array.join('');
+}
+
+function reverseSentence(str: string): string {
+    return str.split(/\s/).map(reverseWord).join(' ');
 }
 
 
@@ -65,7 +65,7 @@ console.log(summator('1','2','3','4','5'));
 
 console.log(getUnique([1,2,1,3,4,4,2,5]));
 
-console.log(letterReverse('s1tar3t'));
-console.log(letterReverse('s1tar3t 2 hellow'));
-console.log(letterReverse('s1ta$%r3t 2 hel^low'));
-console.log(letterReverse('s1tar3t 2   low5'));
+console.log(reverseSentence('s1tar3t'));
+console.log(reverseSentence('s1tar3t 2 hellow'));
+console.log(reverseSentence('s1ta$%r3t 2 hel^low'));
+console.log(reverseSentence('s1tar3t 2   low5'));

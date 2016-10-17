@@ -1,0 +1,26 @@
+.flikr-box .search-panel {
+  padding: 10px;
+}
+
+.flikr-box .image-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.flikr-box .image-area .image-box {
+  width: 150px;
+  height: 150px;
+}
+.flikr-box .image-area .image-box .caption{
+  width: 100%;
+  background-color: #fafafa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flikr-box .image-area .image-box img {
+  width: 100%;
+}
