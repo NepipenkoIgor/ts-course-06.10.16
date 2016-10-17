@@ -14,6 +14,9 @@
   "dependencies": {
     "@types/lodash": "4.14.37",
     "lodash": "4.16.4",
+    "q": "1.4.1",
+    "ts-loader": "0.9.3",
+    "webpack": "1.13.2",
     "whatwg-fetch": "1.0.0"
   }
 }
