@@ -1,7 +1,7 @@
 import assert = require('assert');
 import getUnique from '../src/func/get-unique';
 
-describe('reverse', () => {
+describe('getUnique', () => {
   it('without arguments must return []', () => {
     assert.deepEqual(getUnique(), []);
   });
