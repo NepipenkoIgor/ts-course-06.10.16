@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>Flikr</title>
     <script src="../../node_modules/whatwg-fetch/fetch.js"></script>
+    <script src="../../node_modules/lodash/lodash.min.js"></script>
+    <script src="../../node_modules/q/q.js"></script>
   </head>
   <body>
     <div class="flikr-box">
@@ -12,7 +14,7 @@
         <input class="flickr-search-input" type="text">
         <button class="flickr-search-button">Search</button>
         <label> Sort by
-          <select id="sort">
+          <select class="flickr-sort-select">
             <option selected>Title</option>
             <option>User</option>
           </select>

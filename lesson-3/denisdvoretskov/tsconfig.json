@@ -7,9 +7,9 @@
     "noEmitOnError": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
-    "lib": ["es6", "dom", "es2015.promise"],
-    "typeRoots": ["node_modules"],
-    "types": ["lodash"]
+    "lib": ["es6", "dom", "es2015.promise", "es2016.array.include"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
+    "types": ["lodash", "q"]
   },
   "include": ["./*.ts"],
   "exclude": ["node_modules"]

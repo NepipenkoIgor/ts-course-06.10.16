@@ -1,58 +1,7 @@
-// Улучшить flickr app
-//
-// * 1. Избавтесь от `any`
-//
-// 2. Сортируйте фото по title
-//
-// 2.1 можете добавить debounce click
-// на search( lodash) и сортировку по имени или названию
-//
-// 3. Реализуйте возможность отображение имени пользователя,
-// которому пренадлежит фото
-//   `${this.uri}method=flickr.people.getInfo&
-//             api_key=${this.apiKey}&user_id=${photo.owner}&format=json&nojsoncallback=1`
-//
-// используйте  -> Promise / Q library
-//
-// https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch
-// https://github.com/iliakan/ts-course/blob/master/ts-lesson-3/demo-flikr-app/scripts/fetch.ts
-//
-//`${this.uri}method=${this.qyeryMethod}&api_key=${this.apiKey}&text=${text}&page=1&format=json&nojsoncallback=1`
-//
-// uri: 'https://api.flickr.com/services/rest/?',
-//     queryMethod: 'flickr.photos.search',
-//     apiKey: '7fbc4d0fd04492d32 fa9a2f718c6293e'
-//
-// interface Request {
-//   method: string;
-//   url: string;
-//   context: string;
-// }
-//
-// interface RequestInit {
-//   mode: string;
-//   method: string;
-// }
-//
-// declare let Request: {
-//   prototype: Request;
-//   new (input: string|Request, init: RequestInit): Request;
-// };
-//
-// interface ResponseInit {
-//   status: string;
-//   statusText: string;
-// }
-//
-// interface ResponseBody {
-//   blob: Blob;
-//   formData: FormData
-// }
-//
-// declare let Response: {
-//   prototype: Response;
-//   new (input: ResponseBody, init: ResponseInit): Response;
-// };
+interface IUserInfo {
+  username: string;
+  profileurl: string;
+}
 
 interface IFlickrPhoto {
   farm: number;
@@ -62,58 +11,79 @@ interface IFlickrPhoto {
   owner: string;
   secret: string;
   server: string;
-  title: string
+  title: string;
+  user: IUserInfo;
 }
 
-interface IFlickrResponse {
-  stat: string,
+interface IFlickrPhotoResponse {
+  stat: string;
   photos: {
     photo: IFlickrPhoto[]
-  }
+  };
+}
+
+interface IFlickrUserResponse {
+  person: {
+    username: {
+      _content: string;
+    },
+    profileurl: {
+      _content: string;
+    }
+  };
 }
 
 interface IFetchResponse {
-  ok: boolean,
-  json: () => Promise<IFlickrResponse>
+  ok: boolean;
+  json: () => Promise<IFlickrPhotoResponse | IFlickrUserResponse>;
 }
 
 declare function fetch(input: string): Promise<IFetchResponse>
 
 type TFlickrOpt = {
-  elem: HTMLElement,
-  sortElement: HTMLSelectElement,
-  uri: string,
-  queryMethod: string,
+  searchDivElement: HTMLDivElement,
   apiKey: string
 }
 
 enum EOrderBy {title, user}
 
-class Flickr {
-  protected elem: HTMLElement;
-  private sortElement: HTMLSelectElement;
-  protected uri: string;
-  protected queryMethod: string;
-  protected apiKey: string;
+const URI: string = 'https://api.flickr.com/services/rest/?';
 
-  protected input: HTMLInputElement;
-  protected searchButton: HTMLButtonElement;
-  protected imagesBox: HTMLDivElement;
+class Flickr {
+  private static readonly uri: string = URI;
+  private apiKey: string;
+  private searchInputElement: HTMLInputElement;
+  private searchButtonElement: HTMLButtonElement;
+  private sortElement: HTMLSelectElement;
+  private imagesElement: HTMLDivElement;
+  private orderBy: EOrderBy;
   private photos: IFlickrPhoto[];
 
-  private orderBy: EOrderBy;
-
   public constructor(opt: TFlickrOpt) {
-    Object.assign(this, opt);
-
+    this.apiKey = opt.apiKey;
     this.orderBy = EOrderBy.title;
+    this.photos = [];
+    this.bindElements(opt.searchDivElement);
+    this.addEventListeners();
+  }
 
-    this.input = <HTMLInputElement>this.elem.querySelector(".flickr-search-input");
-    this.imagesBox = <HTMLDivElement>this.elem.querySelector(".image-area");
-    this.searchButton = <HTMLButtonElement>this.elem.querySelector(".flickr-search-button");
+  private bindElements(searchDivElement: HTMLDivElement): void {
+    this.searchInputElement = <HTMLInputElement>searchDivElement
+    .querySelector('.flickr-search-input');
+    this.imagesElement = <HTMLDivElement>searchDivElement
+    .querySelector('.image-area');
+    this.searchButtonElement = <HTMLButtonElement>searchDivElement
+    .querySelector('.flickr-search-button');
+    this.sortElement = <HTMLSelectElement>searchDivElement
+    .querySelector('.flickr-sort-select');
+  }
 
-    this.searchButton.addEventListener('click', this.handleSearch);
-    this.sortElement.addEventListener('change', this.handleSortChange)
+  private addEventListeners(): void {
+    this.searchButtonElement.addEventListener('click', this.handleSearch);
+    this.sortElement.addEventListener('change', this.handleSortChange);
+    this.searchInputElement.addEventListener(
+      'input', _.debounce(this.handleSearch, 1000)
+    );
   }
 
   private render(): void {
@@ -121,91 +91,145 @@ class Flickr {
 
     for (let photo of this.photos) {
       content += `
-<div class='image-box'>
-  <div class='caption'>
-    <span>Title: ${photo.title}</span>
-    <br>
-    <span>Owner: ${photo.owner}</span>
-  </div>
-<img src='https://farm${photo.farm}
-.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg'/>
-</div>`
+        <div class='image-box'>
+          <div class='caption'>
+            <span>Title: ${photo.title}</span>
+            <br>
+            User: <a href='${photo.user.profileurl}'>${photo.user.username}</a>
+          </div>
+          <img src='https://farm${photo.farm}.
+staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg'/>
+        </div>`;
     }
 
-    this.imagesBox.innerHTML = content;
+    this.imagesElement.innerHTML = content;
   }
 
   private sort(): void {
-    this.photos.sort((a: IFlickrPhoto, b: IFlickrPhoto): number => {
-      // TODO: Write generic for it
-      if (this.orderBy === EOrderBy.title) {
-        if (a.title > b.title) {
-          return 1
-        } else if (a.title < b.title) {
-          return -1;
-        }
-
-        return 0;
-      }
-
-      if (this.orderBy === EOrderBy.user) {
-        if (a.owner > b.owner) {
-          return 1
-        } else if (a.owner < b.owner) {
-          return -1;
-        }
-
-        return 0;
-      }
-
-      return 0;
-    })
+    this.photos = _.sortBy(
+      this.photos,
+      this.orderBy === EOrderBy.title ? ['title'] : ['user.username']
+    );
   }
 
   private handleSortChange = (): void => {
     this.orderBy = <EOrderBy>this.sortElement.selectedIndex;
+
+    if (this.photos.length === 0) {
+      return;
+    }
+
     this.sort();
     this.render();
   };
 
   private handleSearch = (): void => {
-    const text: string = this.input.value.trim();
+    const text: string = this.searchInputElement.value.trim();
 
     if (!text) {
       return;
     }
 
-    const url = `${this.uri}method=${this.queryMethod}
-&api_key=${this.apiKey}&text=${text}&page=1&format=json&nojsoncallback=1`;
-
-    this.fetchPhotos(url);
-  };
-
-  private fetchPhotos(input: string): void {
-    fetch(input)
-    .then((res: IFetchResponse): Promise<IFlickrResponse> => {
-      if (!res.ok) {
-        throw new Error("'can't load photos")
-      }
-
-      return res.json();
+    this.getPhotos(text)
+    .then(() => {
+      return this.getUsers();
     })
-    .then((res: IFlickrResponse) => {
-      this.photos = res.photos.photo;
+    .then(() => {
       this.sort();
       this.render();
+    })
+    .catch((err: Error) => {
+      console.error(err.message);
     });
-    // .catch() // TODO: add catch
+  };
+
+  private getPhotos(text: string): Q.Promise<void> {
+    const url = `${Flickr.uri}method=flickr.photos.search
+&api_key=${this.apiKey}&text=${text}&page=1&format=json&nojsoncallback=1`;
+
+    return Q.Promise<void>(
+      (resolve: () => void, reject: (err: Error) => void) => {
+        fetch(url)
+        .then((res: IFetchResponse): Promise<IFlickrPhotoResponse> => {
+          if (!res.ok) {
+            throw new Error("'can't load photos");
+          }
+          return res.json();
+        })
+        .then((res: IFlickrPhotoResponse) => {
+          this.photos = res.photos.photo;
+          resolve();
+        })
+        .catch((err: Error) => { // it's not work
+          this.photos = [];
+          reject(err);
+        });
+      });
+  }
+
+  private getUserPromise(owner: string): Q.Promise<IUserInfo> {
+    const url = `${Flickr.uri}method=flickr.people.getInfo
+&api_key=${this.apiKey}&user_id=${owner}&format=json&nojsoncallback=1`;
+
+    return Q.Promise<IUserInfo>((resolve: (user: IUserInfo) => void) => {
+      fetch(url)
+      .then((res: IFetchResponse): Promise<IFlickrUserResponse> => {
+        if (!res.ok) {
+          throw new Error("'can't load user");
+        }
+
+        return res.json();
+      })
+      .then((res: IFlickrUserResponse) => {
+        resolve({
+          username: res.person.username._content,
+          profileurl: res.person.profileurl._content,
+        });
+      });
+    });
+  }
+
+  private getUsers(): Q.Promise<void> {
+    return Q.Promise<void>((resolve: () => void) => {
+      if (this.photos.length === 0) {
+        return resolve();
+      }
+      const owners: string[] = [];
+      const promises: Q.Promise<IUserInfo>[] = [];
+
+      this.photos.forEach((item: IFlickrPhoto) => {
+        if (!owners.includes(item.owner)) {
+          owners.push(item.owner);
+        }
+      });
+
+      if (owners.length === 0) {
+        return resolve();
+      }
+
+      owners.forEach((item: string) => {
+        promises.push(this.getUserPromise(item));
+      });
+
+      Q.all(promises)
+      .then((res: IUserInfo[]) => {
+
+        this.photos.forEach((item: IFlickrPhoto) => {
+          const indexOwner = owners.indexOf(item.owner);
+
+          item.user = {
+            username: res[indexOwner].username,
+            profileurl: res[indexOwner].profileurl
+          };
+        });
+
+        resolve();
+      });
+    });
   }
 }
 
-const sortElement: HTMLSelectElement | null =
-        <HTMLSelectElement>document.getElementById('sort');
-
 const flickr = new Flickr({
-  elem: <HTMLDivElement>document.querySelector('.flikr-box'),
-  sortElement: sortElement,
-  uri: 'https://api.flickr.com/services/rest/?',
-  queryMethod: 'flickr.photos.search',
+  searchDivElement: <HTMLDivElement>document.querySelector('.flikr-box'),
   apiKey: '7fbc4d0fd04492d32fa9a2f718c6293e'
 });
